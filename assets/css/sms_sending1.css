@@ -1,0 +1,12 @@
+
+#form_results10_sms{ display: none;} 
+
+@media only screen and (min-width: 767px) {
+    #form_results10_sms{ display: block;} 
+    .show_mobile_ios_sms{ display: none; }
+    .show_mobile_sms{ margin-left: 1rem; display: block; }
+}
+@supports (-webkit-touch-callout: none) {
+    #how_mobile_ios_sms{ display: block; text-decoration: none; padding: 10px; margin-left: 1rem; }
+    .show_mobile_sms { display: none; }
+}
