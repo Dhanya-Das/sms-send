@@ -3,7 +3,7 @@
 * Plugin Name: SMS Send 2.0
 * Plugin URI: https://abacies.com
 * Description: Customized plugin for sms sending.
-* Version: 0.1
+* Version: 1.01
 * Author: Abacies
 * Author URI: https://abacies.com
 **/
@@ -53,7 +53,7 @@ function get_all_form_entries(){
 add_shortcode('text_message_list','text_message_list');
 function text_message_list(){
 	$user_id = get_current_user_id();
-	
+    $organization_data = get_organization_data();
 	$html = "";
     if($user_id){
 		
@@ -117,10 +117,10 @@ function text_message_list(){
 								$querys = get_posts( $args_value );
 								foreach($querys as $datas){
 									if($data->post_title == $studentEntries->campagin_url){
-										$postID = $datas->ID;
-										$donation = charitable_get_donation($postID);
+										$post_ID = $datas->ID;
+										$donation = charitable_get_donation($post_ID);
 										$campaign_id = current($donation->get_campaign_donations())->campaign_id;
-										if ($campaign_id == $campaignID) {
+										if ($campaign_id == $post_ID) {
 											$amtRaised = $donation->get_total_donation_amount();
 											if($amtRaised){
 												$amtraised = number_format((float)$amtRaised, 2, '.', '');
@@ -131,53 +131,53 @@ function text_message_list(){
 										}else {
 											$amt_raised = "$0"; 
 										}
-										$camp_goal = get_post_meta($campaignID, '_campaign_goal', true);
-										if($camp_goal) {
-											$campGgoal = "$$camp_goal";
-										}else {
-											$campGgoal = "$0";
-										}
-										$author_id = get_post_field( 'post_author', $campaignID );
-										$author_name = get_the_author_meta( 'display_name', $author_id );
+										
+										
 									}
 								}
+								$camp_goal = get_post_meta($post_ID, '_campaign_goal', true);
+								if($camp_goal) {
+									$campGgoal = "$$camp_goal";
+								}else {
+									$campGgoal = "$0";
+								}
+								$author_id = get_post_field( 'post_author', $postID );
+								$camp_title = get_the_title($postID);
+								$author_name = get_the_author_meta( 'display_name', $author_id );
+								$page_link = get_permalink($postID);
 								foreach ($get_list as $value) {
 									if($value->form_id = $formID){
 										if($value->id == $message1ID ) {
 											$message1 = $value->meta_value;
 											$keywords1 = ["{Campaign Owner}", "{Campaign Goal}", "{Organization}", "{Campaign Title}", "{Campaign URL}", '{Amount Raised}'];
-											$values1   = [$author_name, $campGgoal, $organization_data['name'], $camp_title, $camp_url, $amt_raised];
+											$values1   = [$author_name, $campGgoal, $organization_data['name'], $camp_title, $page_link, $amt_raised];
 											$content1 = str_replace($keywords1, $values1, $message1);
-										}
-										if($value->id == $message2ID ) {
-											$message2 = $value->meta_value;
-											$keywords2 = ["{Campaign Owner}", "{Campaign Goal}", "{Organization}", "{Campaign Title}", "{Campaign URL}", '{Amount Raised}'];
-											$values2   = [$author_name, $campGgoal, $organization_data['name'], $camp_title, $camp_url, $amt_raised];
-											$content2 = str_replace($keywords2, $values2, $message2);
-										}
-										if($value->id == $message3ID ) {
-											$message3 = $value->meta_value;
-											$keywords3 = ["{Campaign Owner}", "{Campaign Goal}", "{Organization}", "{Campaign Title}", "{Campaign URL}", '{Amount Raised}'];
-											$values3   = [$author_name, $campGgoal, $organization_data['name'], $camp_title, $camp_url, $amt_raised];
-											$content3 = str_replace($keywords3, $values3, $message3);
 										}
 									}
 								}
-								$page_link = get_permalink($postID);
+								
 								$html .="<tr>
 									<td scope='row'>$i</td>
 									<td>$studentEntries->name</td>
 									<td><a href='tel:$studentEntries->phone'>$studentEntries->phone</a></td>
 									<td> <div class='d-flex'>
-											<form action='' class='d-flex sms-submit-form' id='sms-submit-form' method='post'> 
-												<select class='sms-form-select' id='sms-form-select' name='sms-form-select'>
-												<option value='$content1 $page_link'>MSG1</option>
-												<option value='$content2 $page_link'>MSG2</option>
-												<option value='$content3 $page_link'>MSG3</option>
-												</select>
 												<a class='show_mobile_sms btn btn-dark' id='show_mobilesms' style='margin-left: 1rem; background-color:black; color:#ffffff; text-decoration: none; border-radius: 5px;' id='mobile_submitsms_btn' data-type='sms:?body=' href='sms:?body=$content1 $page_link'>Send</a>
 									 			<a class='show_mobile_ios_sms btn btn-dark' id='show_mobile_iossms' style='margin-left: 1rem; background-color:black; color:#ffffff; text-decoration: none; border-radius: 5px;' id='mobile_submitsms_btn_ios' data-type='sms://?&body=' href='sms://?&body=$content1 $page_link'>Send</a>	
-												</form>";
+												";
+								// $html .="<tr>
+								// 	<td scope='row'>$i</td>
+								// 	<td>$studentEntries->name</td>
+								// 	<td><a href='tel:$studentEntries->phone'>$studentEntries->phone</a></td>
+								// 	<td> <div class='d-flex'>
+								// 			<form action='' class='d-flex sms-submit-form' id='sms-submit-form' method='post'> 
+								// 				<select class='sms-form-select' id='sms-form-select' name='sms-form-select'>
+								// 				<option value='$content1 $page_link'>MSG1</option>
+								// 				<option value='$content2 $page_link'>MSG2</option>
+								// 				<option value='$content3 $page_link'>MSG3</option>
+								// 				</select>
+								// 				<a class='show_mobile_sms btn btn-dark' id='show_mobilesms' style='margin-left: 1rem; background-color:black; color:#ffffff; text-decoration: none; border-radius: 5px;' id='mobile_submitsms_btn' data-type='sms:?body=' href='sms:?body=$content1 $page_link'>Send</a>
+								// 	 			<a class='show_mobile_ios_sms btn btn-dark' id='show_mobile_iossms' style='margin-left: 1rem; background-color:black; color:#ffffff; text-decoration: none; border-radius: 5px;' id='mobile_submitsms_btn_ios' data-type='sms://?&body=' href='sms://?&body=$content1 $page_link'>Send</a>	
+								// 				</form>";
 									$html .="</div>
 									</td>";
 							}
