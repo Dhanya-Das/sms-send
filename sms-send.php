@@ -3,7 +3,7 @@
 * Plugin Name: SMS Send 2.0
 * Plugin URI: https://abacies.com
 * Description: Customized plugin for sms sending.
-* Version: 1.01
+* Version: 1.05
 * Author: Abacies
 * Author URI: https://abacies.com
 **/
@@ -82,6 +82,7 @@ function text_message_list(){
 		$message1ID = $field_id_settings['message1'];
 		$message2ID = $field_id_settings['message2'];
 		$message3ID = $field_id_settings['message3'];
+		$message4ID = $field_id_settings['message4'];
 
 		if($is_value == '1'){
 			$html .= "<div class='sms_send'>
@@ -147,22 +148,22 @@ function text_message_list(){
 								$page_link = get_permalink($postID);
 								foreach ($get_list as $value) {
 									if($value->form_id = $formID){
-										if($value->id == $message1ID ) {
-											$message1 = $value->meta_value;
+										if($value->id == $message4ID ) {
+											$message4 = $value->meta_value;
 											$keywords1 = ["{Campaign Owner}", "{Campaign Goal}", "{Organization}", "{Campaign Title}", "{Campaign URL}", '{Amount Raised}'];
 											$values1   = [$author_name, $campGgoal, $organization_data['name'], $camp_title, $page_link, $amt_raised];
-											$content1 = str_replace($keywords1, $values1, $message1);
+											$content1 = str_replace($keywords1, $values1, $message4);
 										}
 									}
 								}
-								
+								$phoneNumber = str_replace(array( '(', ')', ' ', '+1', '–' ), '', $studentEntries->phone);
 								$html .="<tr>
 									<td scope='row'>$i</td>
 									<td>$studentEntries->name</td>
 									<td><a href='tel:$studentEntries->phone'>$studentEntries->phone</a></td>
 									<td> <div class='d-flex'>
-												<a class='show_mobile_sms btn btn-dark' id='show_mobilesms' style='margin-left: 1rem; background-color:black; color:#ffffff; text-decoration: none; border-radius: 5px;' id='mobile_submitsms_btn' data-type='sms:?body=' href='sms:?body=$content1 $page_link'>Send</a>
-									 			<a class='show_mobile_ios_sms btn btn-dark' id='show_mobile_iossms' style='margin-left: 1rem; background-color:black; color:#ffffff; text-decoration: none; border-radius: 5px;' id='mobile_submitsms_btn_ios' data-type='sms://?&body=' href='sms://?&body=$content1 $page_link'>Send</a>	
+												<a class='show_mobile_sms btn btn-dark' id='show_mobilesms' style='margin-left: 1rem; background-color:black; color:#ffffff; text-decoration: none; border-radius: 5px;' id='mobile_submitsms_btn' data-type='sms:?body=' href='sms:+1$phoneNumber?body=$content1'>Send</a>
+									 			<a class='show_mobile_ios_sms btn btn-dark' id='show_mobile_iossms' style='margin-left: 1rem; background-color:black; color:#ffffff; text-decoration: none; border-radius: 5px;' id='mobile_submitsms_btn_ios' data-type='sms://?&body=' href='sms:+1$phoneNumber//?&body=$content1'>Send</a>	
 												";
 								// $html .="<tr>
 								// 	<td scope='row'>$i</td>
